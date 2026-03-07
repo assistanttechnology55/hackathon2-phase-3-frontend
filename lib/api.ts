@@ -1,25 +1,30 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL ||
 'http://localhost:8000';
-function getAuthToken(): string | null {
-  return localStorage.getItem('hackathon_auth_token');
-}
 async function apiRequest<T>(
  endpoint: string,
  options: RequestInit = {}
 ):Promise<T> {
  const url = `${API_URL}${endpoint}`;
- const token = getAuthToken();
      
  const config: RequestInit = {
   ...options,
   headers: {
    'Content-Type': 'application/json',
-  ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
-  ...options.headers,
+    ...options.headers,
   },
 };
 try {
-  const response = await fetch(url, config);
+  console.log('>>> REQUEST:', options.method ||
+'GET', url);
+    console.log('>>> BODY:', options.body);
+     
+   const response = await fetch(url, config);
+    
+   console.log('<<< RESPONSE:', response.status,
+response.url);
+     
+  const responseText = await response.text();
+  console.log('<<< RESPONSE BODY:', responseText);
    
  if (!response.ok) {
    const errorText = await response.text();
